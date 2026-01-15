@@ -143,6 +143,42 @@
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
+
+        /* Editable Timetable Styles */
+        [contenteditable="true"] {
+            outline: none;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [contenteditable="true"]:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px dashed rgba(124, 77, 255, 0.5);
+        }
+
+        .timetable-entry {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .timetable-entry:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .edit-entry-btn,
+        .delete-entry-btn {
+            transition: all 0.2s;
+        }
+
+        .edit-entry-btn:hover,
+        .delete-entry-btn:hover {
+            transform: scale(1.1);
+        }
     </style>
 
     <!-- Gemini AI Integration - Added by Gemini Code Embedder -->
@@ -484,7 +520,7 @@
                             <span class="font-semibold" id="nav-username">User</span>
                             <span class="text-sm text-blue-200" id="nav-class">Computer Science</span>
                         </div>
-                        <img class="h-10 w-10 rounded-full border-2 border-white"
+                        <img id="nav-profile-photo" class="h-10 w-10 rounded-full border-2 border-white object-cover"
                             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366F1'%3E%3Cpath d='M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0 2c-6.627 0-12 5.373-12 12h24c0-6.627-5.373-12-12-12z'/%3E%3C/svg%3E"
                             alt="Profile">
                         <button class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition"
@@ -498,7 +534,10 @@
         <div class="bg-gray-800 shadow-md md:hidden">
             <div class="flex overflow-x-auto">
                 <button class="tab-btn px-4 py-3 font-medium text-blue-400 border-b-2 border-blue-400"
-                    data-tab="attendance">
+                    data-tab="dashboard" id="dashboard-tab-btn-mobile">
+                    <i class="fas fa-home mr-2"></i>Dashboard
+                </button>
+                <button class="tab-btn px-4 py-3 font-medium text-gray-400" data-tab="attendance">
                     <i class="fas fa-fingerprint mr-2"></i>Attendance
                 </button>
                 <button class="tab-btn px-4 py-3 font-medium text-gray-400" data-tab="timetable">
@@ -515,83 +554,7 @@
 
         <div class="container mx-auto px-4 py-6">
             <div class="flex flex-col md:flex-row gap-6">
-                <!-- Sidebar (Desktop) -->
-                <div class="hidden md:block w-full md:w-1/4 lg:w-1/5">
-                    <div class="bg-gray-800 rounded-lg shadow-md p-4 mb-6">
-                        <div class="flex flex-col items-center text-center mb-6">
-                            <img class="h-24 w-24 rounded-full mb-4 border-4 border-blue-500"
-                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366F1'%3E%3Cpath d='M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0 2c-6.627 0-12 5.373-12 12h24c0-6.627-5.373-12-12-12z'/%3E%3C/svg%3E"
-                                alt="Profile">
-                            <h2 class="text-xl font-bold" id="sidebar-username">User</h2>
-                            <p class="text-gray-400" id="sidebar-id">BATCH</p>
-                            <div class="mt-2 bg-green-800 text-green-200 text-xs px-2 py-1 rounded-full">ID Verified
-                            </div>
-                        </div>
 
-                        <nav class="space-y-2">
-                            <button
-                                class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-blue-400 bg-blue-900"
-                                data-tab="attendance">
-                                <i class="fas fa-fingerprint mr-3"></i>Attendance
-                            </button>
-                            <button
-                                class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-gray-400 hover:bg-gray-700"
-                                data-tab="timetable">
-                                <i class="fas fa-calendar-alt mr-3"></i>Timetable
-                            </button>
-                            <button
-                                class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-gray-400 hover:bg-gray-700"
-                                data-tab="rescheduler">
-                                <i class="fas fa-exchange-alt mr-3"></i>Rescheduler
-                            </button>
-                            <button
-                                class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-gray-400 hover:bg-gray-700"
-                                data-tab="suggestions">
-                                <i class="fas fa-lightbulb mr-3"></i>Suggestions
-                            </button>
-                            <button
-                                class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-gray-400 hover:bg-gray-700"
-                                data-tab="profile">
-                                <i class="fas fa-user mr-3"></i>Profile
-                            </button>
-                            <button
-                                class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-gray-400 hover:bg-gray-700"
-                                data-tab="routine">
-                                <i class="fas fa-clock mr-3"></i>Daily Routine
-                            </button>
-                        </nav>
-                    </div>
-
-                    <div class="bg-gray-800 rounded-lg shadow-md p-4">
-                        <h3 class="font-bold text-lg mb-3">Today's Schedule</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-start">
-                                <div class="bg-blue-900 text-blue-200 text-xs font-bold px-2 py-1 rounded mr-3">9:00
-                                </div>
-                                <div>
-                                    <div class="font-medium">Data Structures</div>
-                                    <div class="text-xs text-gray-400">Room 302</div>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <div class="bg-blue-900 text-blue-200 text-xs font-bold px-2 py-1 rounded mr-3">10:00
-                                </div>
-                                <div>
-                                    <div class="font-medium">Algorithms</div>
-                                    <div class="text-xs text-gray-400">Room 305</div>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <div class="bg-green-900 text-green-200 text-xs font-bold px-2 py-1 rounded mr-3">11:00
-                                </div>
-                                <div>
-                                    <div class="font-medium">Free Period</div>
-                                    <div class="text-xs text-gray-400">Library</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Main Content -->
                 <div class="w-full md:w-3/4 lg:w-4/5">
@@ -671,8 +634,193 @@
 
                     <!-- Dashboard Content (Initially Hidden) -->
                     <div id="dashboard-content" class="hidden">
+                        <!-- Welcome Dashboard Tab -->
+                        <div id="dashboard" class="tab-content active">
+                            <div class="space-y-6">
+                                <!-- Welcome Header -->
+                                <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-lg shadow-lg">
+                                    <div class="flex flex-col md:flex-row items-center justify-between">
+                                        <div class="text-white mb-4 md:mb-0">
+                                            <h1 class="text-3xl font-bold mb-2">Welcome back, <span
+                                                    id="dashboard-username">User</span>!</h1>
+                                            <p class="text-blue-100">Here's what's happening today</p>
+                                        </div>
+                                        <div class="text-right text-white">
+                                            <p class="text-sm text-blue-100" id="dashboard-date"></p>
+                                            <p class="text-2xl font-bold" id="dashboard-time"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats Cards -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">Today's Attendance</p>
+                                                <p class="text-2xl font-bold text-white mt-1" id="attendance-count">0/0
+                                                </p>
+                                            </div>
+                                            <div class="bg-blue-900 p-3 rounded-full">
+                                                <i class="fas fa-fingerprint text-blue-400 text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">Upcoming Classes</p>
+                                                <p class="text-2xl font-bold text-white mt-1" id="upcoming-classes">0
+                                                </p>
+                                            </div>
+                                            <div class="bg-green-900 p-3 rounded-full">
+                                                <i class="fas fa-calendar-check text-green-400 text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">This Week</p>
+                                                <p class="text-2xl font-bold text-white mt-1" id="week-attendance">0%
+                                                </p>
+                                            </div>
+                                            <div class="bg-yellow-900 p-3 rounded-full">
+                                                <i class="fas fa-chart-line text-yellow-400 text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">Total Classes</p>
+                                                <p class="text-2xl font-bold text-white mt-1" id="total-classes">0</p>
+                                            </div>
+                                            <div class="bg-purple-900 p-3 rounded-full">
+                                                <i class="fas fa-book text-purple-400 text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Actions & Today's Schedule -->
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Quick Actions -->
+                                    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+                                        <h2 class="text-xl font-bold mb-4 flex items-center">
+                                            <i class="fas fa-bolt text-yellow-400 mr-2"></i>
+                                            Quick Actions
+                                        </h2>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <button onclick="switchTab('attendance')"
+                                                class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg transition transform hover:scale-105 flex flex-col items-center">
+                                                <i class="fas fa-fingerprint text-2xl mb-2"></i>
+                                                <span class="font-semibold">Mark Attendance</span>
+                                            </button>
+                                            <button onclick="switchTab('timetable')"
+                                                class="bg-green-600 hover:bg-green-700 text-white p-4 rounded-lg transition transform hover:scale-105 flex flex-col items-center">
+                                                <i class="fas fa-calendar-alt text-2xl mb-2"></i>
+                                                <span class="font-semibold">View Timetable</span>
+                                            </button>
+                                            <button onclick="switchTab('suggestions')"
+                                                class="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-lg transition transform hover:scale-105 flex flex-col items-center">
+                                                <i class="fas fa-lightbulb text-2xl mb-2"></i>
+                                                <span class="font-semibold">Suggestions</span>
+                                            </button>
+                                            <button onclick="switchTab('profile')"
+                                                class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-lg transition transform hover:scale-105 flex flex-col items-center">
+                                                <i class="fas fa-user text-2xl mb-2"></i>
+                                                <span class="font-semibold">My Profile</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Today's Schedule -->
+                                    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+                                        <h2 class="text-xl font-bold mb-4 flex items-center">
+                                            <i class="fas fa-clock text-blue-400 mr-2"></i>
+                                            Today's Schedule
+                                        </h2>
+                                        <div class="space-y-3" id="dashboard-schedule">
+                                            <div class="flex items-center p-3 bg-gray-700 rounded-lg">
+                                                <div
+                                                    class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded mr-3">
+                                                    9:00</div>
+                                                <div class="flex-1">
+                                                    <div class="font-medium text-white">Data Structures</div>
+                                                    <div class="text-xs text-gray-400">Room 302 • Prof. Sharma</div>
+                                                </div>
+                                                <span
+                                                    class="bg-green-800 text-green-200 text-xs px-2 py-1 rounded-full">Completed</span>
+                                            </div>
+                                            <div class="flex items-center p-3 bg-gray-700 rounded-lg">
+                                                <div
+                                                    class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded mr-3">
+                                                    10:00</div>
+                                                <div class="flex-1">
+                                                    <div class="font-medium text-white">Algorithms</div>
+                                                    <div class="text-xs text-gray-400">Room 305 • Prof. Gupta</div>
+                                                </div>
+                                                <span
+                                                    class="bg-yellow-800 text-yellow-200 text-xs px-2 py-1 rounded-full">In
+                                                    Progress</span>
+                                            </div>
+                                            <div class="flex items-center p-3 bg-gray-700 rounded-lg">
+                                                <div
+                                                    class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded mr-3">
+                                                    11:00</div>
+                                                <div class="flex-1">
+                                                    <div class="font-medium text-white">Free Period</div>
+                                                    <div class="text-xs text-gray-400">Library • Self Study</div>
+                                                </div>
+                                                <span
+                                                    class="bg-blue-800 text-blue-200 text-xs px-2 py-1 rounded-full">Upcoming</span>
+                                            </div>
+                                        </div>
+                                        <button onclick="switchTab('timetable')"
+                                            class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">
+                                            View Full Timetable →
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Recent Activity -->
+                                <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+                                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                                        <i class="fas fa-history text-green-400 mr-2"></i>
+                                        Recent Activity
+                                    </h2>
+                                    <div class="space-y-3" id="recent-activity">
+                                        <div class="flex items-center p-3 bg-gray-700 rounded-lg">
+                                            <div class="bg-green-600 p-2 rounded-full mr-3">
+                                                <i class="fas fa-check text-white"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="font-medium text-white">Attendance marked</div>
+                                                <div class="text-xs text-gray-400">Data Structures • 9:00 AM</div>
+                                            </div>
+                                            <div class="text-xs text-gray-400">2 hours ago</div>
+                                        </div>
+                                        <div class="flex items-center p-3 bg-gray-700 rounded-lg">
+                                            <div class="bg-blue-600 p-2 rounded-full mr-3">
+                                                <i class="fas fa-calendar text-white"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="font-medium text-white">Timetable updated</div>
+                                                <div class="text-xs text-gray-400">Weekly schedule modified</div>
+                                            </div>
+                                            <div class="text-xs text-gray-400">1 day ago</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Attendance Tab -->
-                        <div id="attendance" class="tab-content active">
+                        <div id="attendance" class="tab-content">
                             <div class="bg-gray-800 p-6 rounded-lg shadow-md">
                                 <h2 class="text-2xl font-bold mb-4">Mark Attendance</h2>
                                 <div class="camera-container rounded-3xl overflow-hidden mb-6 shadow-md mx-auto"
@@ -680,9 +828,16 @@
                                     <video id="video-attendance" class="block bg-black"></video>
                                     <canvas id="canvas-attendance" class="block"></canvas>
                                 </div>
+                                <div id="liveness-status" class="mb-2 text-center text-sm text-gray-400"
+                                    style="display: none;">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    <span id="liveness-status-text">Verifying you are live...</span>
+                                </div>
                                 <button id="mark-attendance-btn"
                                     class="w-full px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition transform hover:scale-105 shadow-lg"
-                                    disabled>Mark Attendance with Face Recognition</button>
+                                    disabled>
+                                    <span id="mark-attendance-btn-text">Mark Attendance with Face Recognition</span>
+                                </button>
                                 <div class="mt-8">
                                     <h3 class="text-xl font-semibold mb-4">Today's Attendance</h3>
                                     <div class="overflow-x-auto">
@@ -743,48 +898,14 @@
                                     </div>
                                 </div>
 
+                                <div class="mb-4 flex justify-end">
+                                    <button id="addTimetableEntry"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+                                        <i class="fas fa-plus"></i> Add Entry
+                                    </button>
+                                </div>
                                 <div class="space-y-4" id="timetableContent">
-                                    <div
-                                        class="flex items-center p-4 border-l-4 border-blue-500 bg-blue-900 rounded-lg">
-                                        <div class="w-16 text-blue-200 font-bold">9:00</div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Data Structures</h3>
-                                            <p class="text-sm text-gray-400">Room 302 • Prof. Sharma</p>
-                                        </div>
-                                        <div class="bg-green-800 text-green-200 text-xs px-2 py-1 rounded-full">
-                                            Completed</div>
-                                    </div>
-
-                                    <div
-                                        class="flex items-center p-4 border-l-4 border-blue-500 bg-blue-900 rounded-lg">
-                                        <div class="w-16 text-blue-200 font-bold">10:00</div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Algorithms</h3>
-                                            <p class="text-sm text-gray-400">Room 305 • Prof. Gupta</p>
-                                        </div>
-                                        <div class="bg-yellow-800 text-yellow-200 text-xs px-2 py-1 rounded-full">In
-                                            Progress</div>
-                                    </div>
-
-                                    <div
-                                        class="flex items-center p-4 border-l-4 border-green-500 bg-green-900 rounded-lg">
-                                        <div class="w-16 text-green-200 font-bold">11:00</div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Free Period</h3>
-                                            <p class="text-sm text-gray-400">Library • Self Study</p>
-                                        </div>
-                                        <div class="bg-blue-800 text-blue-200 text-xs px-2 py-1 rounded-full">Upcoming
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="flex items-center p-4 border-l-4 border-gray-500 bg-gray-700 rounded-lg">
-                                        <div class="w-16 text-gray-300 font-bold">12:00</div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Lunch Break</h3>
-                                            <p class="text-sm text-gray-400">Cafeteria</p>
-                                        </div>
-                                    </div>
+                                    <!-- Timetable entries will be dynamically generated here -->
                                 </div>
                             </div>
                         </div>
@@ -982,10 +1103,15 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                                     <div class="md:col-span-1 flex flex-col items-center">
-                                        <img class="h-32 w-32 rounded-full mb-4 border-4 border-blue-500"
+                                        <img id="profile-photo"
+                                            class="h-32 w-32 rounded-full mb-4 border-4 border-blue-500 object-cover cursor-pointer"
                                             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366F1'%3E%3Cpath d='M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0 2c-6.627 0-12 5.373-12 12h24c0-6.627-5.373-12-12-12z'/%3E%3C/svg%3E"
                                             alt="Profile">
-                                        <button class="text-blue-400 text-sm mt-2">Change Photo</button>
+                                        <input type="file" id="profile-photo-input" accept="image/*"
+                                            style="display: none;">
+                                        <button id="change-photo-btn"
+                                            class="text-blue-400 text-sm mt-2 hover:text-blue-300 cursor-pointer">Change
+                                            Photo</button>
                                     </div>
 
                                     <div class="md:col-span-2">
@@ -1019,17 +1145,17 @@
                                 </div>
 
                                 <div class="mb-6">
-                                    <h3 class="text-lg font-semibold mb-3">Interests</h3>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm">Web
-                                            Development</span>
-                                        <span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm">Machine
-                                            Learning</span>
-                                        <span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm">Data
-                                            Structures</span>
-                                        <span
-                                            class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm">Algorithms</span>
-                                        <button class="text-blue-400 text-sm">+ Add more</button>
+                                    <h3 class="text-lg font-semibold mb-3">Interests & Skills</h3>
+                                    <div class="flex flex-wrap gap-2 mb-3" id="skills-container">
+                                        <!-- Skills will be dynamically added here -->
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" id="new-skill-input" placeholder="Enter a skill or interest"
+                                            class="flex-1 px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <button id="add-skill-btn"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                                            <i class="fas fa-plus mr-2"></i>Add Skill
+                                        </button>
                                     </div>
                                 </div>
 
@@ -1190,27 +1316,114 @@
             </div>
         </nav>
         <div class="container mx-auto px-4 py-6">
-            <div class="bg-gray-800 p-6 rounded-lg shadow-md">
-                <h1 class="text-3xl font-bold mb-6">Admin Panel</h1>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-purple-900 p-4 rounded-lg">
-                        <h2 class="text-xl font-semibold mb-4">User Management</h2>
-                        <button id="view-users-btn"
-                            class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded transition">View
-                            Users</button>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold">Admin Panel</h1>
+                <button id="create-batch-btn"
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Create Batch
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- User Management Section -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">User Management</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Select User Type</label>
+                        <select id="user-type-select"
+                            class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            <option value="">-- Select Type --</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
                     </div>
-                    <div class="bg-purple-900 p-4 rounded-lg">
-                        <h2 class="text-xl font-semibold mb-4">Attendance Reports</h2>
-                        <button id="generate-report-btn"
-                            class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded transition">Generate
-                            Report</button>
+
+                    <div class="mb-4" id="email-input-container" style="display: none;">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                        <input type="email" id="user-email-input" placeholder="Enter email address"
+                            class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                     </div>
-                    <div class="bg-purple-900 p-4 rounded-lg">
-                        <h2 class="text-xl font-semibold mb-4">System Settings</h2>
-                        <button id="edit-settings-btn"
-                            class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded transition">Edit
-                            Settings</button>
+
+                    <button id="add-user-btn"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition mb-4"
+                        disabled>
+                        <i class="fas fa-user-plus mr-2"></i>Add User
+                    </button>
+
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3">Registered Users</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto" id="users-list">
+                            <!-- Users will be displayed here -->
+                        </div>
                     </div>
+                </div>
+
+                <!-- Batch Management Section -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Batch Management</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Select Batch</label>
+                        <div class="flex gap-2 mb-2">
+                            <select id="batch-select"
+                                class="flex-1 px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                <option value="">-- Select or Create Batch --</option>
+                            </select>
+                            <button id="new-batch-name-btn"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <input type="text" id="new-batch-name-input" placeholder="Enter batch name (e.g., CS2021)"
+                            class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 mb-2"
+                            style="display: none;">
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold mb-3">Select Students</h3>
+                        <div class="max-h-48 overflow-y-auto border border-gray-600 rounded-lg p-3 bg-gray-700"
+                            id="students-checkbox-list">
+                            <!-- Student checkboxes will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="text-sm font-medium text-gray-400 mb-2">Selected Students</h3>
+                        <div class="min-h-16 max-h-32 overflow-y-auto border border-gray-600 rounded-lg p-3 bg-gray-700 flex flex-wrap gap-2"
+                            id="selected-students">
+                            <span class="text-gray-500 text-sm">No students selected</span>
+                        </div>
+                    </div>
+
+                    <button id="add-to-batch-btn"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition mb-4"
+                        disabled>
+                        <i class="fas fa-users mr-2"></i>Add Selected to Batch
+                    </button>
+
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3">Existing Batches</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto" id="batches-list">
+                            <!-- Batches will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Admin Features -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="bg-purple-900 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4">Attendance Reports</h2>
+                    <button id="generate-report-btn"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded transition">Generate
+                        Report</button>
+                </div>
+                <div class="bg-purple-900 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4">System Settings</h2>
+                    <button id="edit-settings-btn"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded transition">Edit
+                        Settings</button>
                 </div>
             </div>
         </div>
@@ -1284,11 +1497,30 @@
             let isVideoAttendancePlaying = false;
             let regInterval, loginInterval, attendanceInterval;
             let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || {};
-            let loggedInUser = null;
+
+            let livenessPoints = 0;
+            let lastDescriptor = null;
 
             // Classroom location
             const CLASSROOM_LOCATION = { lat: 22.681432, lon: 75.879018 };
             const RADIUS_METERS = 50;
+
+            // Function to update all profile photos (defined early for use in login)
+            function updateAllProfilePhotos(imageData) {
+                const profilePhoto = document.getElementById('profile-photo');
+                const navProfilePhoto = document.getElementById('nav-profile-photo');
+                const sidebarProfilePhoto = document.getElementById('sidebar-profile-photo');
+
+                if (profilePhoto && imageData) {
+                    profilePhoto.src = imageData;
+                }
+                if (navProfilePhoto && imageData) {
+                    navProfilePhoto.src = imageData;
+                }
+                if (sidebarProfilePhoto && imageData) {
+                    sidebarProfilePhoto.src = imageData;
+                }
+            }
 
             // Utility functions
             const showMessage = (msg) => { messageText.textContent = msg; messageBox.classList.remove('hidden'); };
@@ -1403,37 +1635,54 @@
                 }
             };
 
-            // Detect face
             const detectFace = (video, canvas, mode) => {
                 const context = canvas.getContext('2d');
+                livenessPoints = 0;
+
                 const interval = setInterval(async () => {
                     let isPlaying;
                     if (mode === 'register') isPlaying = isVideoRegPlaying;
                     else if (mode === 'login') isPlaying = isVideoLoginPlaying;
                     else if (mode === 'attendance') isPlaying = isVideoAttendancePlaying;
-                    if (!isPlaying) {
+
+                    if (!isPlaying || video.paused || video.ended) {
                         clearInterval(interval);
                         return;
                     }
-                    if (video.paused || video.ended) {
-                        clearInterval(interval);
-                        return;
-                    }
+
                     context.clearRect(0, 0, canvas.width, canvas.height);
-                    const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+                    const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+                        .withFaceLandmarks()
+                        .withFaceExpressions()
+                        .withFaceDescriptor();
+
                     if (detections) {
                         const resizedDetections = faceapi.resizeResults(detections, { width: canvas.width, height: canvas.height });
                         faceapi.draw.drawDetections(canvas, resizedDetections);
-                        faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                        if (mode === 'register') registerBtn.disabled = false;
-                        else if (mode === 'login' && Object.keys(registeredUsers).length > 0) loginBtn.disabled = false;
-                        else if (mode === 'attendance' && loggedInUser) markAttendanceBtn.disabled = false;
-                    } else if (mode === 'register') {
-                        registerBtn.disabled = true;
-                    } else if (mode === 'attendance') {
-                        markAttendanceBtn.disabled = true;
+
+                        // Liveness Logic: Compare current face texture/position to the last frame
+                        if (lastDescriptor) {
+                            const distance = faceapi.euclideanDistance(detections.descriptor, lastDescriptor);
+                            // Photos have almost 0 distance. Real humans have micro-movements between 0.01 and 0.15
+                            if (distance > 0.01 && distance < 0.15) {
+                                livenessPoints++;
+                            }
+                        }
+                        lastDescriptor = detections.descriptor;
+
+                        // UI Feedback
+                        const btn = (mode === 'register' ? registerBtn : (mode === 'login' ? loginBtn : markAttendanceBtn));
+
+                        if (livenessPoints < 15) {
+                            btn.disabled = true;
+                            btn.innerHTML = `<i class="fas fa-spinner animate-spin mr-2"></i> Verifying Liveness (${Math.round((livenessPoints / 15) * 100)}%)`;
+                        } else {
+                            btn.disabled = false;
+                            btn.innerHTML = (mode === 'register' ? 'Capture & Register' : (mode === 'login' ? 'Authenticate' : 'Mark Attendance'));
+                        }
                     }
-                }, 200);
+                }, 150);
+
                 if (mode === 'register') regInterval = interval;
                 else if (mode === 'login') loginInterval = interval;
                 else if (mode === 'attendance') attendanceInterval = interval;
@@ -1473,9 +1722,24 @@
                 loggedInUser = { username: bestMatch.label, descriptor: new Float32Array(registeredUsers[bestMatch.label].descriptor) };
 
                 // Update UI with username
-                document.getElementById('nav-username').textContent = bestMatch.label;
-                document.getElementById('sidebar-username').textContent = bestMatch.label;
-                document.getElementById('sidebar-id').textContent = bestMatch.label + 'ID';
+                const username = bestMatch.label;
+                document.getElementById('nav-username').textContent = username;
+                document.getElementById('sidebar-username').textContent = username;
+                document.getElementById('sidebar-id').textContent = username + 'ID';
+
+                // Update dashboard username
+                const dashboardUsername = document.getElementById('dashboard-username');
+                if (dashboardUsername) dashboardUsername.textContent = username;
+
+                // Load and update profile photo if available
+                try {
+                    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    if (savedProfile.photo) {
+                        updateAllProfilePhotos(savedProfile.photo);
+                    }
+                } catch (e) {
+                    console.error('Error loading profile photo on login:', e);
+                }
 
                 // Face recognized -> verify location
                 if (!navigator.geolocation) { showMessage("Geolocation not supported."); return; }
@@ -1485,6 +1749,9 @@
                     // Show dashboard after successful login
                     authScreens.classList.add('hidden');
                     dashboardContent.classList.remove('hidden');
+
+                    // Initialize dashboard
+                    initializeDashboard();
 
                     if (distance <= RADIUS_METERS) {
                         showMessage("Location verified ✅ Attendance marked!");
@@ -1496,36 +1763,316 @@
                     // Still show dashboard for access
                     authScreens.classList.add('hidden');
                     dashboardContent.classList.remove('hidden');
+
+                    // Initialize dashboard
+                    initializeDashboard();
                 });
             });
 
-            // Attendance mark button
+            // Liveness Detection Function
+            async function performLivenessCheck(video, duration = 3000) {
+                return new Promise(async (resolve) => {
+                    // Validate video input
+                    if (!video) {
+                        resolve({ isLive: false, reason: 'Video stream not available' });
+                        return;
+                    }
+
+                    const frames = [];
+                    const startTime = Date.now();
+                    const checkInterval = 200; // Check every 200ms
+                    let lastFacePosition = null;
+                    let movementDetected = false;
+                    let eyeAspectRatios = [];
+                    let frameCount = 0;
+                    const minFrames = 5; // Need at least 5 frames
+                    const minMovement = 10; // Minimum pixel movement
+                    let checkLiveness = null;
+
+                    // Set timeout to ensure cleanup
+                    const timeoutId = setTimeout(() => {
+                        if (checkLiveness) {
+                            clearInterval(checkLiveness);
+                            checkLiveness = null;
+                        }
+                        if (frameCount < minFrames) {
+                            resolve({ isLive: false, reason: 'Not enough frames captured. Please ensure your face is visible.' });
+                        } else if (!movementDetected) {
+                            resolve({ isLive: false, reason: 'No face movement detected. Please move your head slightly.' });
+                        } else {
+                            resolve({ isLive: true });
+                        }
+                    }, duration + 500); // Add buffer time
+
+                    checkLiveness = setInterval(async () => {
+                        if (Date.now() - startTime >= duration) {
+                            if (checkLiveness) {
+                                clearInterval(checkLiveness);
+                                checkLiveness = null;
+                            }
+                            clearTimeout(timeoutId);
+
+                            // Evaluate liveness
+                            if (frameCount < minFrames) {
+                                resolve({ isLive: false, reason: 'Not enough frames captured. Please ensure your face is visible.' });
+                                return;
+                            }
+
+                            if (!movementDetected) {
+                                resolve({ isLive: false, reason: 'No face movement detected (possible photo/video). Please move your head slightly.' });
+                                return;
+                            }
+
+                            // Check for eye blink variation (indicates live person)
+                            if (eyeAspectRatios.length > 0) {
+                                const earVariance = calculateVariance(eyeAspectRatios);
+                                if (earVariance < 0.001) {
+                                    resolve({ isLive: false, reason: 'No eye movement detected (possible static image). Please blink naturally.' });
+                                    return;
+                                }
+                            }
+
+                            resolve({ isLive: true });
+                            return;
+                        }
+
+                        try {
+                            // Check if video is still playing
+                            if (!video || video.paused || video.ended) {
+                                return;
+                            }
+
+                            const detections = await faceapi.detectSingleFace(video,
+                                new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+                                .withFaceLandmarks();
+
+                            if (detections && detections.detection) {
+                                frameCount++;
+                                const box = detections.detection.box;
+                                const currentPosition = {
+                                    x: box.x + box.width / 2,
+                                    y: box.y + box.height / 2,
+                                    width: box.width,
+                                    height: box.height
+                                };
+
+                                // Check for movement
+                                if (lastFacePosition) {
+                                    const movement = Math.sqrt(
+                                        Math.pow(currentPosition.x - lastFacePosition.x, 2) +
+                                        Math.pow(currentPosition.y - lastFacePosition.y, 2)
+                                    );
+                                    if (movement > minMovement) {
+                                        movementDetected = true;
+                                    }
+                                }
+                                lastFacePosition = currentPosition;
+
+                                // Calculate Eye Aspect Ratio (EAR) for blink detection
+                                const landmarks = detections.landmarks;
+                                if (landmarks && landmarks.positions && landmarks.positions.length >= 68) {
+                                    try {
+                                        const leftEye = [
+                                            landmarks.positions[36], landmarks.positions[37],
+                                            landmarks.positions[38], landmarks.positions[39],
+                                            landmarks.positions[40], landmarks.positions[41]
+                                        ];
+                                        const rightEye = [
+                                            landmarks.positions[42], landmarks.positions[43],
+                                            landmarks.positions[44], landmarks.positions[45],
+                                            landmarks.positions[46], landmarks.positions[47]
+                                        ];
+
+                                        const leftEAR = calculateEAR(leftEye);
+                                        const rightEAR = calculateEAR(rightEye);
+
+                                        // Only add if both eyes detected successfully
+                                        if (leftEAR > 0 && rightEAR > 0) {
+                                            const avgEAR = (leftEAR + rightEAR) / 2;
+                                            eyeAspectRatios.push(avgEAR);
+                                        }
+                                    } catch (error) {
+                                        console.error('Error processing eye landmarks:', error);
+                                    }
+                                }
+
+                                frames.push({
+                                    timestamp: Date.now(),
+                                    position: currentPosition,
+                                    detections: detections
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Liveness check error:', error);
+                            // Don't fail immediately, continue checking
+                            // But if too many errors, fail the check
+                            if (error.message && error.message.includes('face-api')) {
+                                // Face-api specific error, might be model loading issue
+                                clearInterval(checkLiveness);
+                                clearTimeout(timeoutId);
+                                resolve({ isLive: false, reason: 'Face detection error. Please refresh and try again.' });
+                                return;
+                            }
+                        }
+                    }, checkInterval);
+                });
+            }
+
+            // Calculate Eye Aspect Ratio (for blink detection)
+            function calculateEAR(eyePoints) {
+                if (!eyePoints || eyePoints.length < 6) {
+                    return 0;
+                }
+
+                // Validate all points exist
+                for (let i = 0; i < 6; i++) {
+                    if (!eyePoints[i] || typeof eyePoints[i].x === 'undefined' || typeof eyePoints[i].y === 'undefined') {
+                        return 0;
+                    }
+                }
+
+                try {
+                    const vertical1 = Math.sqrt(
+                        Math.pow(eyePoints[1].x - eyePoints[5].x, 2) +
+                        Math.pow(eyePoints[1].y - eyePoints[5].y, 2)
+                    );
+                    const vertical2 = Math.sqrt(
+                        Math.pow(eyePoints[2].x - eyePoints[4].x, 2) +
+                        Math.pow(eyePoints[2].y - eyePoints[4].y, 2)
+                    );
+                    const horizontal = Math.sqrt(
+                        Math.pow(eyePoints[0].x - eyePoints[3].x, 2) +
+                        Math.pow(eyePoints[0].y - eyePoints[3].y, 2)
+                    );
+
+                    // Prevent division by zero
+                    if (horizontal === 0) {
+                        return 0;
+                    }
+
+                    return (vertical1 + vertical2) / (2.0 * horizontal);
+                } catch (error) {
+                    console.error('Error calculating EAR:', error);
+                    return 0;
+                }
+            }
+
+            // Calculate variance
+            function calculateVariance(values) {
+                if (values.length === 0) return 0;
+                const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                const squareDiffs = values.map(value => Math.pow(value - mean, 2));
+                return squareDiffs.reduce((a, b) => a + b, 0) / values.length;
+            }
+
+            // Attendance mark button with liveness detection
             markAttendanceBtn.addEventListener('click', async () => {
-                if (!loggedInUser) { showMessage("Not logged in."); return; }
-                const detections = await faceapi.detectSingleFace(videoAttendance, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
-                if (!detections) { showMessage("Face not detected."); return; }
+                if (!loggedInUser) {
+                    showMessage("Not logged in.");
+                    return;
+                }
+
+                // Check if video is available
+                if (!videoAttendance || !videoAttendance.srcObject) {
+                    showMessage("Camera not available. Please ensure camera access is granted.");
+                    return;
+                }
+
+                // Disable button during liveness check
+                markAttendanceBtn.disabled = true;
+                const livenessStatus = document.getElementById('liveness-status');
+                const livenessStatusText = document.getElementById('liveness-status-text');
+                const markAttendanceBtnText = document.getElementById('mark-attendance-btn-text');
+
+                if (livenessStatus && livenessStatusText) {
+                    livenessStatus.style.display = 'block';
+                    livenessStatusText.textContent = 'Verifying you are live... Please move your head slightly.';
+                }
+                if (markAttendanceBtnText) {
+                    markAttendanceBtnText.textContent = 'Verifying Liveness...';
+                }
+
+                // Perform liveness detection first
+                let livenessResult;
+                try {
+                    livenessResult = await performLivenessCheck(videoAttendance, 3000);
+                } catch (error) {
+                    console.error('Liveness check failed:', error);
+                    markAttendanceBtn.disabled = false;
+                    if (livenessStatus) livenessStatus.style.display = 'none';
+                    if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
+                    showMessage('Liveness check encountered an error. Please try again.');
+                    return;
+                }
+
+                if (livenessStatus) livenessStatus.style.display = 'none';
+
+                if (!livenessResult.isLive) {
+                    markAttendanceBtn.disabled = false;
+                    if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
+                    showMessage(`Liveness check failed: ${livenessResult.reason}. Please ensure you are physically present and move naturally.`);
+                    return;
+                }
+
+                // Liveness passed, now verify face match
+                const detections = await faceapi.detectSingleFace(videoAttendance,
+                    new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+                    .withFaceLandmarks().withFaceDescriptor();
+
+                if (!detections) {
+                    markAttendanceBtn.disabled = false;
+                    if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
+                    showMessage("Face not detected.");
+                    return;
+                }
 
                 const distance = faceapi.euclideanDistance(detections.descriptor, loggedInUser.descriptor);
 
-                if (distance >= 0.6) { showMessage("Face does not match logged in user."); return; }
+                if (distance >= 0.6) {
+                    markAttendanceBtn.disabled = false;
+                    if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
+                    showMessage("Face does not match logged in user.");
+                    return;
+                }
 
-                // Face matched, verify location
-                if (!navigator.geolocation) { showMessage("Geolocation not supported."); return; }
+                // Face matched and liveness verified, now verify location
+                if (!navigator.geolocation) {
+                    markAttendanceBtn.disabled = false;
+                    if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
+                    showMessage("Geolocation not supported.");
+                    return;
+                }
+
                 navigator.geolocation.getCurrentPosition(pos => {
                     const dist = getDistance(pos.coords.latitude, pos.coords.longitude, CLASSROOM_LOCATION.lat, CLASSROOM_LOCATION.lon);
                     if (dist <= RADIUS_METERS) {
                         showMessage("Attendance marked successfully ✅");
+                        markAttendanceBtn.disabled = false;
+                        if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
                         // TODO: Update attendance table dynamically if needed
                     } else {
                         showMessage("Outside classroom ❌ Attendance not marked.");
+                        markAttendanceBtn.disabled = false;
+                        if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
                     }
                 }, err => {
                     showMessage("Location permission denied. Attendance not marked.");
+                    markAttendanceBtn.disabled = false;
+                    if (markAttendanceBtnText) markAttendanceBtnText.textContent = 'Mark Attendance with Face Recognition';
                 });
             });
 
             // ===== Dashboard Tab Functionality =====
-            let currentTab = 'attendance';
+            let currentTab = 'dashboard';
+
+            // Function to switch tabs programmatically
+            window.switchTab = function (tabId) {
+                const button = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+                if (button) {
+                    button.click();
+                }
+            };
+
             document.querySelectorAll('.tab-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const tabId = button.getAttribute('data-tab');
@@ -1577,13 +2124,513 @@
                     if (tabId === 'attendance' && loggedInUser) {
                         startVideo(videoAttendance, canvasAttendance, 'attendance');
                     }
+
+                    // Initialize skills when profile tab is accessed
+                    if (tabId === 'profile') {
+                        setTimeout(initSkills, 100);
+                    }
                 });
             });
 
-            // ===== Timetable Day Change (Simple Simulation) =====
-            window.changeDay = function (day) {
-                document.querySelectorAll('#timetable button').forEach(btn => btn.classList.remove('bg-blue-700', 'text-white'));
-                event.target.classList.add('bg-blue-700', 'text-white');
+            // ===== Dashboard Initialization =====
+            function initializeDashboard() {
+                // Update date and time
+                function updateDateTime() {
+                    const now = new Date();
+                    const dateEl = document.getElementById('dashboard-date');
+                    const timeEl = document.getElementById('dashboard-time');
+
+                    if (dateEl) {
+                        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                        dateEl.textContent = now.toLocaleDateString('en-US', options);
+                    }
+
+                    if (timeEl) {
+                        timeEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    }
+                }
+
+                // Update stats
+                function updateDashboardStats() {
+                    // Get attendance data from localStorage
+                    const attendanceData = JSON.parse(localStorage.getItem('attendanceData') || '[]');
+                    const today = new Date().toDateString();
+                    const todayAttendance = attendanceData.filter(a => new Date(a.date).toDateString() === today);
+
+                    // Update attendance count
+                    const attendanceCountEl = document.getElementById('attendance-count');
+                    if (attendanceCountEl) {
+                        const totalToday = 4; // Total classes today (can be dynamic)
+                        attendanceCountEl.textContent = `${todayAttendance.length}/${totalToday}`;
+                    }
+
+                    // Update upcoming classes
+                    const upcomingClassesEl = document.getElementById('upcoming-classes');
+                    if (upcomingClassesEl) {
+                        const now = new Date();
+                        const currentHour = now.getHours();
+                        // Count classes after current time (simplified)
+                        upcomingClassesEl.textContent = '2'; // Can be calculated from timetable
+                    }
+
+                    // Update week attendance
+                    const weekAttendanceEl = document.getElementById('week-attendance');
+                    if (weekAttendanceEl) {
+                        const weekStart = new Date();
+                        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                        const weekAttendance = attendanceData.filter(a => new Date(a.date) >= weekStart);
+                        const weekTotal = 20; // Total classes in week
+                        const percentage = weekTotal > 0 ? Math.round((weekAttendance.length / weekTotal) * 100) : 0;
+                        weekAttendanceEl.textContent = `${percentage}%`;
+                    }
+
+                    // Update total classes
+                    const totalClassesEl = document.getElementById('total-classes');
+                    if (totalClassesEl) {
+                        totalClassesEl.textContent = '12'; // Total enrolled classes
+                    }
+                }
+
+                // Update schedule from timetable data
+                function updateDashboardSchedule() {
+                    const scheduleEl = document.getElementById('dashboard-schedule');
+                    if (!scheduleEl) return;
+
+                    try {
+                        const timetableData = JSON.parse(localStorage.getItem('timetableData') || '{}');
+                        const today = new Date().getDay();
+                        const dayMap = { 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri' };
+                        const currentDay = dayMap[today] || 'Mon';
+                        const todaySchedule = timetableData[currentDay] || [];
+
+                        if (todaySchedule.length > 0) {
+                            scheduleEl.innerHTML = todaySchedule.slice(0, 3).map(entry => {
+                                const statusColors = {
+                                    'Completed': 'bg-green-800 text-green-200',
+                                    'In Progress': 'bg-yellow-800 text-yellow-200',
+                                    'Upcoming': 'bg-blue-800 text-blue-200',
+                                    '': 'bg-gray-800 text-gray-200'
+                                };
+                                const statusClass = statusColors[entry.status] || 'bg-gray-800 text-gray-200';
+
+                                return `
+                                    <div class="flex items-center p-3 bg-gray-700 rounded-lg">
+                                        <div class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded mr-3">${escapeHtml(entry.time || '')}</div>
+                        <div class="flex-1">
+                                            <div class="font-medium text-white">${escapeHtml(entry.subject || '')}</div>
+                                            <div class="text-xs text-gray-400">${escapeHtml(entry.room || '')}${entry.teacher ? ' • ' + escapeHtml(entry.teacher) : ''}</div>
+                        </div>
+                                        ${entry.status ? `<span class="${statusClass} text-xs px-2 py-1 rounded-full">${escapeHtml(entry.status)}</span>` : ''}
+                    </div>
+                                `;
+                            }).join('');
+                        }
+                    } catch (e) {
+                        console.error('Error updating schedule:', e);
+                    }
+                }
+
+                // Initial updates
+                updateDateTime();
+                updateDashboardStats();
+                updateDashboardSchedule();
+
+                // Update time every minute
+                setInterval(updateDateTime, 60000);
+            }
+
+            // ===== Editable Timetable System =====
+            // Helper function to escape HTML (prevent XSS)
+            function escapeHtml(s) {
+                if (s === null || s === undefined) return '';
+                return ('' + s).replace(/[&<>"']/g, c => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                })[c]);
+            }
+
+            // Load timetable data from localStorage or use default
+            function loadTimetableData() {
+                const saved = localStorage.getItem('timetableData');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        // Validate structure
+                        if (parsed && typeof parsed === 'object') {
+                            // Ensure all days exist
+                            ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(day => {
+                                if (!Array.isArray(parsed[day])) {
+                                    parsed[day] = [];
+                                }
+                            });
+                            return parsed;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing timetable data:', e);
+                        // Fall through to default
+                    }
+                }
+                // Generate unique IDs
+                const baseTime = Date.now();
+                return {
+                    'Mon': [
+                        { id: baseTime, time: '9:00', subject: 'Data Structures', room: 'Room 302', teacher: 'Prof. Sharma', status: '', borderColor: '' },
+                        { id: baseTime + 1, time: '10:00', subject: 'Algorithms', room: 'Room 305', teacher: 'Prof. Gupta', status: '', borderColor: '' },
+                        { id: baseTime + 2, time: '11:00', subject: 'Free Period', room: 'Library', teacher: 'Self Study', status: '', borderColor: '' },
+                        { id: baseTime + 3, time: '12:00', subject: 'Lunch Break', room: 'Cafeteria', teacher: '', status: '', borderColor: '' }
+                    ],
+                    'Tue': [],
+                    'Wed': [],
+                    'Thu': [],
+                    'Fri': []
+                };
+            }
+
+            function saveTimetableData() {
+                try {
+                    localStorage.setItem('timetableData', JSON.stringify(timetableData));
+                } catch (e) {
+                    console.error('Error saving timetable data:', e);
+                    // Handle quota exceeded or other storage errors
+                    alert('Unable to save timetable data. Your browser storage may be full.');
+                }
+            }
+
+            let timetableData = loadTimetableData();
+            let currentDay = 'Mon';
+
+            function getStatusColors(status) {
+                const colors = {
+                    'Completed': { bg: 'bg-blue-800', text: 'text-blue-200' },
+                    'Ongoing': { bg: 'bg-green-800', text: 'text-green-200' },
+                    'Pending': { bg: 'bg-red-800', text: 'text-red-200' },
+                    'In Progress': { bg: 'bg-yellow-800', text: 'text-yellow-200' }, // Legacy support
+                    'Upcoming': { bg: 'bg-red-800', text: 'text-red-200' }, // Legacy support
+                    '': { bg: '', text: '' }
+                };
+                return colors[status] || { bg: 'bg-gray-800', text: 'text-gray-200' };
+            }
+
+            function getBorderColorClass(color) {
+                const colors = {
+                    'blue': 'border-blue-500',
+                    'green': 'border-green-500',
+                    'yellow': 'border-yellow-500',
+                    'red': 'border-red-500',
+                    'purple': 'border-purple-500',
+                    'gray': 'border-gray-500'
+                };
+                return colors[color] || 'border-blue-500';
+            }
+
+            function getBgColorClass(color) {
+                const colors = {
+                    'blue': 'bg-blue-900',
+                    'green': 'bg-green-900',
+                    'yellow': 'bg-yellow-900',
+                    'red': 'bg-red-900',
+                    'purple': 'bg-purple-900',
+                    'gray': 'bg-gray-700'
+                };
+                return colors[color] || 'bg-blue-900';
+            }
+
+            function getTextColorClass(color) {
+                const colors = {
+                    'blue': 'text-blue-200',
+                    'green': 'text-green-200',
+                    'yellow': 'text-yellow-200',
+                    'red': 'text-red-200',
+                    'purple': 'text-purple-200',
+                    'gray': 'text-gray-300'
+                };
+                return colors[color] || 'text-blue-200';
+            }
+
+            // Determine lecture status and color based on system time
+            function getLectureStatusAndColor(entryTime, day) {
+                const now = new Date();
+                const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                const dayMap = { 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5 };
+                const entryDay = dayMap[day];
+
+                // Parse time (format: "HH:MM" or "HH:MM AM/PM")
+                function parseTime(timeStr) {
+                    if (!timeStr) return null;
+
+                    let time = timeStr.trim();
+                    let hours = 0, minutes = 0;
+
+                    // Handle 12-hour format
+                    if (time.includes('AM') || time.includes('PM') || time.includes('am') || time.includes('pm')) {
+                        const parts = time.split(/[:\s]/);
+                        hours = parseInt(parts[0]) || 0;
+                        minutes = parseInt(parts[1]) || 0;
+                        const period = (parts[parts.length - 1] || '').toUpperCase();
+
+                        if (period === 'PM' && hours !== 12) hours += 12;
+                        if (period === 'AM' && hours === 12) hours = 0;
+                    } else {
+                        // Handle 24-hour format
+                        const parts = time.split(':');
+                        hours = parseInt(parts[0]) || 0;
+                        minutes = parseInt(parts[1]) || 0;
+                    }
+
+                    return { hours, minutes };
+                }
+
+                const entryTimeObj = parseTime(entryTime);
+                if (!entryTimeObj) {
+                    return { status: 'Pending', color: 'red' };
+                }
+
+                // Create date objects for comparison
+                const entryDate = new Date();
+                entryDate.setHours(entryTimeObj.hours, entryTimeObj.minutes, 0, 0);
+
+                // Adjust for day of week (only if viewing today's day)
+                if (entryDay !== undefined && entryDay === currentDay) {
+                    // Same day - compare times directly
+                    // No date adjustment needed
+                } else if (entryDay !== undefined) {
+                    // Different day - calculate day difference
+                    const dayDiff = entryDay - currentDay;
+                    // Handle weekend wrap-around
+                    let adjustedDiff = dayDiff;
+                    if (dayDiff > 3) adjustedDiff = dayDiff - 7; // Next week
+                    if (dayDiff < -3) adjustedDiff = dayDiff + 7; // Last week
+                    entryDate.setDate(entryDate.getDate() + adjustedDiff);
+                }
+
+                const currentTime = new Date();
+                const lectureEndTime = new Date(entryDate);
+                lectureEndTime.setHours(lectureEndTime.getHours() + 1); // Assume 1 hour lecture duration
+
+                // Determine status
+                if (currentTime < entryDate) {
+                    // Future lecture - Pending (Red)
+                    return { status: 'Pending', color: 'red' };
+                } else if (currentTime >= entryDate && currentTime <= lectureEndTime) {
+                    // Current lecture - Ongoing (Green)
+                    return { status: 'Ongoing', color: 'green' };
+                } else {
+                    // Past lecture - Completed (Blue)
+                    return { status: 'Completed', color: 'blue' };
+                }
+            }
+
+            function renderTimetable(day) {
+                const content = document.getElementById('timetableContent');
+                if (!content) return;
+
+                // Ensure day exists in data structure
+                if (!timetableData[day]) {
+                    timetableData[day] = [];
+                }
+
+                const entries = timetableData[day] || [];
+
+                if (entries.length === 0) {
+                    content.innerHTML = '<div class="text-center text-gray-400 py-8">No entries for this day. Click "Add Entry" to create one.</div>';
+                    return;
+                }
+
+                content.innerHTML = entries.map(entry => {
+                    // Validate entry structure
+                    if (!entry || typeof entry.id === 'undefined') {
+                        return '';
+                    }
+
+                    // Get status and color based on system time
+                    const { status, color } = getLectureStatusAndColor(entry.time, day);
+
+                    // Update entry status automatically
+                    entry.status = status;
+                    entry.borderColor = color; // Store for reference but it's auto-calculated
+
+                    const statusColors = getStatusColors(status);
+                    const borderClass = getBorderColorClass(color);
+                    const bgClass = getBgColorClass(color);
+                    const textClass = getTextColorClass(color);
+                    const statusBadge = status ?
+                        `<div class="${statusColors.bg} ${statusColors.text} text-xs px-2 py-1 rounded-full">${escapeHtml(status)}</div>` : '';
+
+                    // Escape all user input to prevent XSS
+                    const safeTime = escapeHtml(entry.time || '');
+                    const safeSubject = escapeHtml(entry.subject || '');
+                    const safeRoom = escapeHtml(entry.room || '');
+                    const safeTeacher = escapeHtml(entry.teacher || '');
+                    const detailsText = safeRoom + (safeTeacher ? ' • ' + safeTeacher : '');
+
+                    return `
+                        <div class="flex items-center p-4 border-l-4 ${borderClass} ${bgClass} rounded-lg timetable-entry" data-id="${entry.id}">
+                            <div class="w-20 ${textClass} font-bold">${safeTime}</div>
+                            <div class="flex-1 ml-4">
+                                <h3 class="font-semibold editable-subject" contenteditable="true">${safeSubject}</h3>
+                                <p class="text-sm text-gray-400">
+                                    Room: <span class="editable-room" contenteditable="true">${safeRoom}</span>
+                                    ${safeTeacher ? ` • <span class="text-gray-300">${safeTeacher}</span>` : ''}
+                                </p>
+                        </div>
+                            <div class="flex items-center gap-2">
+                                ${statusBadge}
+                                <button class="edit-entry-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs" title="Save Changes">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                                <button class="delete-entry-btn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs" title="Delete Entry">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                    </div>
+                `;
+                }).filter(html => html !== '').join('');
+
+                // Attach event listeners
+                content.querySelectorAll('.edit-entry-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const entryDiv = this.closest('.timetable-entry');
+                        const id = parseInt(entryDiv.dataset.id);
+                        saveEntry(id);
+                    });
+                });
+
+                content.querySelectorAll('.delete-entry-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const entryDiv = this.closest('.timetable-entry');
+                        const id = parseInt(entryDiv.dataset.id);
+                        deleteEntry(id);
+                    });
+                });
+
+                // Auto-update timetable every minute to reflect current time
+                if (window.timetableUpdateInterval) {
+                    clearInterval(window.timetableUpdateInterval);
+                }
+                window.timetableUpdateInterval = setInterval(() => {
+                    if (document.getElementById('timetableContent') && !document.getElementById('timetableContent').classList.contains('hidden')) {
+                        renderTimetable(currentDay);
+                    }
+                }, 60000); // Update every minute
+            }
+
+            function saveEntry(id) {
+                const entryDiv = document.querySelector(`.timetable-entry[data-id="${id}"]`);
+                if (!entryDiv) {
+                    console.error('Entry not found:', id);
+                    return;
+                }
+
+                // Ensure currentDay data exists
+                if (!timetableData[currentDay]) {
+                    timetableData[currentDay] = [];
+                }
+
+                const entry = timetableData[currentDay].find(e => e.id === id);
+                if (!entry) {
+                    console.error('Entry data not found:', id);
+                    return;
+                }
+
+                const subjectEl = entryDiv.querySelector('.editable-subject');
+                const roomEl = entryDiv.querySelector('.editable-room');
+
+                if (!subjectEl) {
+                    console.error('Required elements not found');
+                    return;
+                }
+
+                // Sanitize and save (only subject and room are editable)
+                entry.subject = subjectEl.textContent.trim() || 'New Subject';
+                entry.room = roomEl ? roomEl.textContent.trim() : entry.room || '';
+
+                // Status and color are auto-calculated based on time; do not set them here
+
+                // Save to localStorage
+                saveTimetableData();
+
+                // Show save confirmation
+                const btn = entryDiv.querySelector('.edit-entry-btn');
+                if (btn) {
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    btn.classList.add('bg-green-600');
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.classList.remove('bg-green-600');
+                        btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    }, 1000);
+                }
+            }
+
+            function deleteEntry(id) {
+                if (!confirm('Are you sure you want to delete this entry?')) {
+                    return;
+                }
+
+                // Ensure currentDay data exists
+                if (!timetableData[currentDay]) {
+                    timetableData[currentDay] = [];
+                }
+
+                const initialLength = timetableData[currentDay].length;
+                timetableData[currentDay] = timetableData[currentDay].filter(e => e.id !== id);
+
+                // Only save and re-render if something was actually deleted
+                if (timetableData[currentDay].length < initialLength) {
+                    saveTimetableData();
+                    renderTimetable(currentDay);
+                }
+            }
+
+            function addNewEntry() {
+                // Ensure currentDay data exists
+                if (!timetableData[currentDay]) {
+                    timetableData[currentDay] = [];
+                }
+
+                // Generate unique ID (use timestamp + random to avoid collisions)
+                const newEntry = {
+                    id: Date.now() + Math.random(),
+                    time: '9:00',
+                    subject: 'New Subject',
+                    room: 'Room',
+                    teacher: 'Teacher',
+                    status: '', // Will be auto-calculated
+                    borderColor: '' // Will be auto-calculated
+                };
+
+                timetableData[currentDay].push(newEntry);
+                saveTimetableData();
+                renderTimetable(currentDay);
+            }
+
+            // ===== Timetable Day Change =====
+            window.changeDay = function (day, event) {
+                // Validate day
+                const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                if (!validDays.includes(day)) {
+                    console.error('Invalid day:', day);
+                    return;
+                }
+
+                // Update button styles - use more reliable selector
+                const buttons = document.querySelectorAll('#timetable button[onclick*="changeDay"]');
+                buttons.forEach(btn => {
+                    const btnDay = btn.getAttribute('onclick')?.match(/changeDay\('(\w+)'\)/)?.[1];
+                    if (btnDay === day) {
+                        btn.classList.add('bg-blue-700', 'text-white');
+                        btn.classList.remove('bg-gray-700', 'text-gray-300');
+                    } else {
+                        btn.classList.remove('bg-blue-700', 'text-white');
+                        btn.classList.add('bg-gray-700', 'text-gray-300');
+                    }
+                });
+
                 const dates = {
                     'Mon': 'Monday, 29 September 2025',
                     'Tue': 'Tuesday, 30 September 2025',
@@ -1591,27 +2638,32 @@
                     'Thu': 'Thursday, 2 October 2025',
                     'Fri': 'Friday, 3 October 2025'
                 };
-                document.getElementById('currentDate').textContent = dates[day] || 'Monday, 29 September 2025';
-                // Simulate content change (static for demo)
-                const content = document.getElementById('timetableContent');
-                content.innerHTML = `
-                    <div class="flex items-center p-4 border-l-4 border-blue-500 bg-blue-900 rounded-lg">
-                        <div class="w-16 text-blue-200 font-bold">9:00</div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold">${day} Subject 1</h3>
-                            <p class="text-sm text-gray-400">Room 302 • Prof. Sharma</p>
-                        </div>
-                        <div class="bg-green-800 text-green-200 text-xs px-2 py-1 rounded-full">Completed</div>
-                    </div>
-                    <div class="flex items-center p-4 border-l-4 border-blue-500 bg-blue-900 rounded-lg">
-                        <div class="w-16 text-blue-200 font-bold">10:00</div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold">${day} Subject 2</h3>
-                            <p class="text-sm text-gray-400">Room 305 • Prof. Gupta</p>
-                        </div>
-                        <div class="bg-yellow-800 text-yellow-200 text-xs px-2 py-1 rounded-full">In Progress</div>
-                    </div>
-                `;
+                const dateEl = document.getElementById('currentDate');
+                if (dateEl) {
+                    dateEl.textContent = dates[day] || 'Monday, 29 September 2025';
+                }
+                currentDay = day;
+                renderTimetable(day);
+            }
+
+            // Initialize timetable
+            function initTimetable() {
+                const addBtn = document.getElementById('addTimetableEntry');
+                if (addBtn) {
+                    addBtn.addEventListener('click', addNewEntry);
+                }
+
+                // Initialize with Monday
+                if (document.getElementById('timetableContent')) {
+                    renderTimetable('Mon');
+                }
+            }
+
+            // Initialize on page load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTimetable);
+            } else {
+                initTimetable();
             }
 
             // ===== Suggestions Start Buttons =====
@@ -1625,35 +2677,267 @@
                 window.open(links[type] || 'https://example.com', '_blank');
             }
 
-            // ===== Profile Save =====
-            document.getElementById('saveProfileBtn').addEventListener('click', () => {
-                const profile = {
-                    name: document.getElementById('profile-name').value,
-                    id: document.getElementById('profile-id').value,
-                    email: document.getElementById('profile-email').value,
-                    course: document.getElementById('profile-course').value,
-                    goals: document.getElementById('profile-goals').value
+            // ===== Profile Photo Change =====
+            const profilePhoto = document.getElementById('profile-photo');
+            const profilePhotoInput = document.getElementById('profile-photo-input');
+            const changePhotoBtn = document.getElementById('change-photo-btn');
+
+            // Function to handle photo selection and preview
+            function handlePhotoChange(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showMessage('Please select a valid image file.');
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage('Image size should be less than 5MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageData = e.target.result;
+
+                    // Update all profile photos
+                    updateAllProfilePhotos(imageData);
+
+                    // Save to localStorage immediately
+                    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    savedProfile.photo = imageData;
+                    localStorage.setItem('userProfile', JSON.stringify(savedProfile));
+
+                    showMessage('Photo updated successfully!');
                 };
-                localStorage.setItem('userProfile', JSON.stringify(profile));
-                // Update sidebar if logged in
-                document.getElementById('sidebar-username').textContent = profile.name;
-                document.getElementById('sidebar-id').textContent = profile.id;
-                showMessage('Profile saved successfully!');
-            });
+                reader.onerror = function () {
+                    showMessage('Error reading image file.');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Add event listeners
+            if (changePhotoBtn) {
+                changePhotoBtn.addEventListener('click', () => {
+                    profilePhotoInput.click();
+                });
+            }
+
+            if (profilePhoto) {
+                profilePhoto.addEventListener('click', () => {
+                    profilePhotoInput.click();
+                });
+            }
+
+            if (profilePhotoInput) {
+                profilePhotoInput.addEventListener('change', handlePhotoChange);
+            }
+
+            // ===== Skills Management =====
+            function renderSkills(skills) {
+                const container = document.getElementById('skills-container');
+                if (!container) return;
+
+                container.innerHTML = skills.map(skill => `
+                    <span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm flex items-center gap-2 skill-tag" data-skill="${escapeHtml(skill)}">
+                        ${escapeHtml(skill)}
+                        <button class="remove-skill-btn text-blue-300 hover:text-red-400 transition" data-skill="${escapeHtml(skill)}" title="Remove">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </span>
+                `).join('');
+
+                // Attach remove event listeners
+                container.querySelectorAll('.remove-skill-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const skillToRemove = this.getAttribute('data-skill');
+                        removeSkill(skillToRemove);
+                    });
+                });
+            }
+
+            function addSkill() {
+                const input = document.getElementById('new-skill-input');
+                if (!input) return;
+
+                const skill = input.value.trim();
+                if (!skill) {
+                    showMessage('Please enter a skill or interest.');
+                    return;
+                }
+
+                // Get current skills
+                const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                const currentSkills = savedProfile.skills || [];
+
+                // Check if skill already exists
+                if (currentSkills.includes(skill)) {
+                    showMessage('This skill is already added.');
+                    input.value = '';
+                    return;
+                }
+
+                // Add skill
+                currentSkills.push(skill);
+                savedProfile.skills = currentSkills;
+                localStorage.setItem('userProfile', JSON.stringify(savedProfile));
+
+                // Update UI
+                renderSkills(currentSkills);
+                input.value = '';
+                showMessage('Skill added successfully!');
+            }
+
+            function removeSkill(skill) {
+                const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                const currentSkills = savedProfile.skills || [];
+
+                // Remove skill
+                const updatedSkills = currentSkills.filter(s => s !== skill);
+                savedProfile.skills = updatedSkills;
+                localStorage.setItem('userProfile', JSON.stringify(savedProfile));
+
+                // Update UI
+                renderSkills(updatedSkills);
+                showMessage('Skill removed successfully!');
+            }
+
+            // Initialize skills functionality
+            let skillsInitialized = false;
+            function initSkills() {
+                // Prevent duplicate initialization
+                if (skillsInitialized) {
+                    // Just render skills if already initialized
+                    try {
+                        const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                        const skills = savedProfile.skills || ['Web Development', 'Machine Learning', 'Data Structures', 'Algorithms'];
+                        renderSkills(skills);
+                    } catch (e) {
+                        console.error('Error loading skills:', e);
+                        renderSkills(['Web Development', 'Machine Learning', 'Data Structures', 'Algorithms']);
+                    }
+                    return;
+                }
+
+                const addSkillBtn = document.getElementById('add-skill-btn');
+                const newSkillInput = document.getElementById('new-skill-input');
+
+                if (addSkillBtn && !addSkillBtn.hasAttribute('data-listener-attached')) {
+                    addSkillBtn.addEventListener('click', addSkill);
+                    addSkillBtn.setAttribute('data-listener-attached', 'true');
+                }
+
+                if (newSkillInput && !newSkillInput.hasAttribute('data-listener-attached')) {
+                    newSkillInput.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            addSkill();
+                        }
+                    });
+                    newSkillInput.setAttribute('data-listener-attached', 'true');
+                }
+
+                // Load existing skills
+                try {
+                    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    const skills = savedProfile.skills || ['Web Development', 'Machine Learning', 'Data Structures', 'Algorithms'];
+                    renderSkills(skills);
+                } catch (e) {
+                    console.error('Error loading skills:', e);
+                    // Default skills
+                    renderSkills(['Web Development', 'Machine Learning', 'Data Structures', 'Algorithms']);
+                }
+
+                skillsInitialized = true;
+            }
+
+            // ===== Profile Save =====
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            if (saveProfileBtn) {
+                saveProfileBtn.addEventListener('click', () => {
+                    const profilePhotoEl = document.getElementById('profile-photo');
+                    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+                    const profile = {
+                        name: document.getElementById('profile-name').value,
+                        id: document.getElementById('profile-id').value,
+                        email: document.getElementById('profile-email').value,
+                        course: document.getElementById('profile-course').value,
+                        goals: document.getElementById('profile-goals').value,
+                        photo: profilePhotoEl ? profilePhotoEl.src : null,
+                        skills: savedProfile.skills || [] // Preserve skills
+                    };
+                    localStorage.setItem('userProfile', JSON.stringify(profile));
+
+                    // Update sidebar if logged in
+                    document.getElementById('sidebar-username').textContent = profile.name;
+                    document.getElementById('sidebar-id').textContent = profile.id;
+
+                    // Update all profile photos
+                    if (profile.photo) {
+                        updateAllProfilePhotos(profile.photo);
+                    }
+
+                    showMessage('Profile saved successfully!');
+                });
+            }
 
             // Load profile on init (after login, but for demo)
-            const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
-            if (savedProfile) {
-                document.getElementById('profile-name').value = savedProfile.name || 'Rahul Sharma';
-                document.getElementById('profile-id').value = savedProfile.id || 'CS2021BATCH';
-                document.getElementById('profile-email').value = savedProfile.email || 'rahul@college.edu';
-                document.getElementById('profile-course').value = savedProfile.course || 'Computer Science';
-                document.getElementById('profile-goals').value = savedProfile.goals || '';
+            try {
+                const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                if (savedProfile && Object.keys(savedProfile).length > 0) {
+                    const nameEl = document.getElementById('profile-name');
+                    const idEl = document.getElementById('profile-id');
+                    const emailEl = document.getElementById('profile-email');
+                    const courseEl = document.getElementById('profile-course');
+                    const goalsEl = document.getElementById('profile-goals');
+
+                    if (nameEl) nameEl.value = savedProfile.name || 'Rahul Sharma';
+                    if (idEl) idEl.value = savedProfile.id || 'CS2021BATCH';
+                    if (emailEl) emailEl.value = savedProfile.email || 'rahul@college.edu';
+                    if (courseEl) courseEl.value = savedProfile.course || 'Computer Science';
+                    if (goalsEl) goalsEl.value = savedProfile.goals || '';
+
+                    // Load profile photo if available and update all profile photos
+                    if (savedProfile.photo) {
+                        updateAllProfilePhotos(savedProfile.photo);
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading profile:', e);
+            }
+
+            // Initialize skills on page load
+            let skillsInitAttempts = 0;
+            const maxSkillsInitAttempts = 10; // Prevent infinite loops
+            function initializeSkillsOnLoad() {
+                // Check if skills container exists
+                const skillsContainer = document.getElementById('skills-container');
+                if (skillsContainer) {
+                    initSkills();
+                } else if (skillsInitAttempts < maxSkillsInitAttempts) {
+                    // If not loaded yet, try again after a short delay
+                    skillsInitAttempts++;
+                    setTimeout(initializeSkillsOnLoad, 500);
+                } else {
+                    console.warn('Skills container not found after multiple attempts');
+                }
+            }
+
+            // Initialize skills when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeSkillsOnLoad);
+            } else {
+                initializeSkillsOnLoad();
             }
 
             // ===== Routine Export =====
-            document.getElementById('exportRoutineBtn').addEventListener('click', () => {
-                const routineText = `Daily Routine - Monday, 29 September 2025
+            const exportRoutineBtn = document.getElementById('exportRoutineBtn');
+            if (exportRoutineBtn) {
+                exportRoutineBtn.addEventListener('click', () => {
+                    const routineText = `Daily Routine - Monday, 29 September 2025
 7:00 - Morning Routine (Completed)
 9:00 - Data Structures Class (Completed)
 10:00 - Algorithms Class (In Progress)
@@ -1661,17 +2945,18 @@
 12:00 - Lunch Break
 14:00 - Database Systems Class (Not Started)
 16:00 - Free Time - Suggested Activity (Not Started)`;
-                const blob = new Blob([routineText], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'daily_routine.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showMessage('Routine exported!');
-            });
+                    const blob = new Blob([routineText], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'daily_routine.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showMessage('Routine exported!');
+                });
+            }
 
             // ===== Neon Rescheduler System =====
             /* ===== in-memory ===== */
@@ -2240,20 +3525,537 @@
             const showMessage = (msg) => { messageText.textContent = msg; messageBox.classList.remove('hidden'); };
             const hideMessage = () => { messageBox.classList.add('hidden'); };
 
-            // View Users
-            document.getElementById('view-users-btn').addEventListener('click', () => {
-                showMessage('User list displayed.');
-            });
+            // Load data from localStorage
+            function loadUsers() {
+                try {
+                    const data = localStorage.getItem('adminUsers');
+                    if (!data) {
+                        return { students: [], teachers: [] };
+                    }
+                    const parsed = JSON.parse(data);
+                    // Validate structure
+                    if (parsed && typeof parsed === 'object') {
+                        if (!Array.isArray(parsed.students)) parsed.students = [];
+                        if (!Array.isArray(parsed.teachers)) parsed.teachers = [];
+                        return parsed;
+                    }
+                    return { students: [], teachers: [] };
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    return { students: [], teachers: [] };
+                }
+            }
+
+            function saveUsers(users) {
+                try {
+                    localStorage.setItem('adminUsers', JSON.stringify(users));
+                } catch (error) {
+                    console.error('Error saving users:', error);
+                    showMessage('Error saving users. Storage may be full.');
+                }
+            }
+
+            function loadBatches() {
+                try {
+                    const data = localStorage.getItem('adminBatches');
+                    if (!data) {
+                        return {};
+                    }
+                    const parsed = JSON.parse(data);
+                    // Validate structure
+                    if (parsed && typeof parsed === 'object') {
+                        // Ensure all batch values are arrays
+                        Object.keys(parsed).forEach(key => {
+                            if (!Array.isArray(parsed[key])) {
+                                parsed[key] = [];
+                            }
+                        });
+                        return parsed;
+                    }
+                    return {};
+                } catch (error) {
+                    console.error('Error loading batches:', error);
+                    return {};
+                }
+            }
+
+            function saveBatches(batches) {
+                try {
+                    localStorage.setItem('adminBatches', JSON.stringify(batches));
+                } catch (error) {
+                    console.error('Error saving batches:', error);
+                    showMessage('Error saving batches. Storage may be full.');
+                }
+            }
+
+            // User Management
+            const userTypeSelect = document.getElementById('user-type-select');
+            const emailInputContainer = document.getElementById('email-input-container');
+            const userEmailInput = document.getElementById('user-email-input');
+            const addUserBtn = document.getElementById('add-user-btn');
+
+            // Show/hide email input based on user type selection
+            if (userTypeSelect && emailInputContainer) {
+                userTypeSelect.addEventListener('change', function () {
+                    if (this.value) {
+                        emailInputContainer.style.display = 'block';
+                        if (addUserBtn) addUserBtn.disabled = false;
+                    } else {
+                        emailInputContainer.style.display = 'none';
+                        if (addUserBtn) addUserBtn.disabled = true;
+                    }
+                });
+            }
+
+            // Add user functionality
+            if (addUserBtn && userTypeSelect && userEmailInput) {
+                addUserBtn.addEventListener('click', function () {
+                    const userType = userTypeSelect.value;
+                    const email = userEmailInput.value.trim();
+
+                    if (!userType || !email) {
+                        showMessage('Please select user type and enter email.');
+                        return;
+                    }
+
+                    // Validate email format
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        showMessage('Please enter a valid email address.');
+                        return;
+                    }
+
+                    const users = loadUsers();
+                    const userList = users[userType + 's']; // 'student' -> 'students', 'teacher' -> 'teachers'
+
+                    // Check if email already exists
+                    if (userList.includes(email)) {
+                        showMessage(`${userType.charAt(0).toUpperCase() + userType.slice(1)} with this email already exists.`);
+                        return;
+                    }
+
+                    // Add user
+                    userList.push(email);
+                    saveUsers(users);
+
+                    // Clear inputs
+                    if (userEmailInput) userEmailInput.value = '';
+                    if (userTypeSelect) userTypeSelect.value = '';
+                    if (emailInputContainer) emailInputContainer.style.display = 'none';
+                    if (addUserBtn) addUserBtn.disabled = true;
+
+                    // Refresh display
+                    renderUsers();
+                    renderStudentsForBatch();
+                    showMessage(`${userType.charAt(0).toUpperCase() + userType.slice(1)} added successfully!`);
+                });
+            }
+
+            // Render users list
+            function renderUsers() {
+                const usersList = document.getElementById('users-list');
+                if (!usersList) return;
+
+                try {
+                    const users = loadUsers();
+                    let html = '';
+
+                    if (users.students && users.students.length > 0) {
+                        html += '<div class="mb-4"><h4 class="font-semibold text-purple-400 mb-2">Students</h4>';
+                        users.students.forEach((email, index) => {
+                            html += `<div class="flex items-center justify-between p-2 bg-gray-700 rounded mb-1">
+                                <span class="text-sm">${escapeHtml(email)}</span>
+                                <button class="text-red-400 hover:text-red-300 text-xs remove-user-btn" data-type="student" data-index="${index}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>`;
+                        });
+                        html += '</div>';
+                    }
+
+                    if (users.teachers && users.teachers.length > 0) {
+                        html += '<div><h4 class="font-semibold text-purple-400 mb-2">Teachers</h4>';
+                        users.teachers.forEach((email, index) => {
+                            html += `<div class="flex items-center justify-between p-2 bg-gray-700 rounded mb-1">
+                                <span class="text-sm">${escapeHtml(email)}</span>
+                                <button class="text-red-400 hover:text-red-300 text-xs remove-user-btn" data-type="teacher" data-index="${index}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>`;
+                        });
+                        html += '</div>';
+                    }
+
+                    if (html === '') {
+                        html = '<p class="text-gray-500 text-sm">No users added yet.</p>';
+                    }
+
+                    usersList.innerHTML = html;
+
+                    // Attach event listeners
+                    usersList.querySelectorAll('.remove-user-btn').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const type = this.getAttribute('data-type');
+                            const index = parseInt(this.getAttribute('data-index'));
+                            if (type && !isNaN(index)) {
+                                removeUser(type, index);
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error rendering users:', error);
+                    usersList.innerHTML = '<p class="text-red-400 text-sm">Error loading users.</p>';
+                }
+            }
+
+            // Remove user function (global for onclick)
+            window.removeUser = function (type, index) {
+                try {
+                    const users = loadUsers();
+                    const userList = users[type + 's'];
+                    if (!userList || !Array.isArray(userList)) {
+                        showMessage('Error: Invalid user list.');
+                        return;
+                    }
+                    if (index < 0 || index >= userList.length) {
+                        showMessage('Error: Invalid user index.');
+                        return;
+                    }
+                    const email = userList[index];
+                    userList.splice(index, 1);
+                    saveUsers(users);
+                    renderUsers();
+                    renderStudentsForBatch();
+                    showMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} removed: ${email}`);
+                } catch (error) {
+                    console.error('Error removing user:', error);
+                    showMessage('Error removing user. Please try again.');
+                }
+            };
+
+            // Batch Management
+            const createBatchBtn = document.getElementById('create-batch-btn');
+            const batchSelect = document.getElementById('batch-select');
+            const newBatchNameInput = document.getElementById('new-batch-name-input');
+            const newBatchNameBtn = document.getElementById('new-batch-name-btn');
+            const addToBatchBtn = document.getElementById('add-to-batch-btn');
+            const studentsCheckboxList = document.getElementById('students-checkbox-list');
+            const selectedStudents = document.getElementById('selected-students');
+
+            let selectedStudentEmails = new Set();
+
+            // Create batch button
+            if (createBatchBtn) {
+                createBatchBtn.addEventListener('click', function () {
+                    const batchName = prompt('Enter batch name (e.g., CS2021, ME2022):');
+                    if (batchName && batchName.trim()) {
+                        const batches = loadBatches();
+                        const name = batchName.trim();
+                        if (batches[name]) {
+                            showMessage('Batch with this name already exists.');
+                            return;
+                        }
+                        batches[name] = [];
+                        saveBatches(batches);
+                        renderBatches();
+                        renderBatchSelect();
+                        if (batchSelect) batchSelect.value = name;
+                        showMessage(`Batch "${name}" created successfully!`);
+                    }
+                });
+            }
+
+            // New batch name input toggle
+            if (newBatchNameBtn && newBatchNameInput) {
+                newBatchNameBtn.addEventListener('click', function () {
+                    if (newBatchNameInput.style.display === 'none' || !newBatchNameInput.style.display) {
+                        newBatchNameInput.style.display = 'block';
+                        newBatchNameInput.focus();
+                    } else {
+                        const batchName = newBatchNameInput.value.trim();
+                        if (batchName) {
+                            const batches = loadBatches();
+                            if (batches[batchName]) {
+                                showMessage('Batch with this name already exists.');
+                                return;
+                            }
+                            batches[batchName] = [];
+                            saveBatches(batches);
+                            renderBatches();
+                            renderBatchSelect();
+                            if (batchSelect) batchSelect.value = batchName;
+                            if (newBatchNameInput) {
+                                newBatchNameInput.value = '';
+                                newBatchNameInput.style.display = 'none';
+                            }
+                            showMessage(`Batch "${batchName}" created successfully!`);
+                        }
+                    }
+                });
+            }
+
+            // Render batch select dropdown
+            function renderBatchSelect() {
+                if (!batchSelect) return;
+                try {
+                    const batches = loadBatches();
+                    const batchNames = Object.keys(batches);
+                    batchSelect.innerHTML = '<option value="">-- Select or Create Batch --</option>' +
+                        batchNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+                } catch (error) {
+                    console.error('Error rendering batch select:', error);
+                    batchSelect.innerHTML = '<option value="">-- Error loading batches --</option>';
+                }
+            }
+
+            // Render students for batch selection
+            function renderStudentsForBatch() {
+                if (!studentsCheckboxList) return;
+                try {
+                    const users = loadUsers();
+                    const students = users.students || [];
+
+                    if (students.length === 0) {
+                        studentsCheckboxList.innerHTML = '<p class="text-gray-500 text-sm">No students available. Add students first.</p>';
+                        return;
+                    }
+
+                    studentsCheckboxList.innerHTML = students.map((email, index) => `
+                        <label class="flex items-center p-2 hover:bg-gray-600 rounded cursor-pointer">
+                            <input type="checkbox" class="student-checkbox mr-2" value="${escapeHtml(email)}" data-index="${index}">
+                            <span class="text-sm">${escapeHtml(email)}</span>
+                        </label>
+                    `).join('');
+
+                    // Attach checkbox listeners
+                    studentsCheckboxList.querySelectorAll('.student-checkbox').forEach(checkbox => {
+                        checkbox.addEventListener('change', function () {
+                            const email = this.value;
+                            if (this.checked) {
+                                selectedStudentEmails.add(email);
+                            } else {
+                                selectedStudentEmails.delete(email);
+                            }
+                            renderSelectedStudents();
+                            updateAddToBatchButton();
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error rendering students for batch:', error);
+                    studentsCheckboxList.innerHTML = '<p class="text-red-400 text-sm">Error loading students.</p>';
+                }
+            }
+
+            // Render selected students
+            function renderSelectedStudents() {
+                if (!selectedStudents) return;
+                if (selectedStudentEmails.size === 0) {
+                    selectedStudents.innerHTML = '<span class="text-gray-500 text-sm">No students selected</span>';
+                    return;
+                }
+
+                selectedStudents.innerHTML = Array.from(selectedStudentEmails).map(email => {
+                    // Properly escape email for onclick attribute
+                    const safeEmail = escapeHtml(email).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    return `
+                        <span class="bg-green-600 text-white px-3 py-1 rounded-full text-xs flex items-center gap-2" data-email="${escapeHtml(email)}">
+                            ${escapeHtml(email)}
+                            <button class="text-white hover:text-red-200 remove-selected-student-btn" data-email="${escapeHtml(email)}">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </span>
+                    `;
+                }).join('');
+
+                // Attach event listeners instead of using onclick
+                selectedStudents.querySelectorAll('.remove-selected-student-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const email = this.getAttribute('data-email');
+                        if (email) {
+                            removeSelectedStudent(email);
+                        }
+                    });
+                });
+            }
+
+            // Remove selected student
+            window.removeSelectedStudent = function (email) {
+                if (!email) return;
+                selectedStudentEmails.delete(email);
+                // Uncheck checkbox - need to escape for querySelector
+                if (studentsCheckboxList) {
+                    const checkboxes = studentsCheckboxList.querySelectorAll('.student-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.value === email) {
+                            checkbox.checked = false;
+                        }
+                    });
+                }
+                renderSelectedStudents();
+                updateAddToBatchButton();
+            };
+
+            // Update add to batch button state
+            function updateAddToBatchButton() {
+                if (!addToBatchBtn || !batchSelect) return;
+                addToBatchBtn.disabled = !(batchSelect.value && selectedStudentEmails.size > 0);
+            }
+
+            // Batch select change
+            if (batchSelect) {
+                batchSelect.addEventListener('change', function () {
+                    updateAddToBatchButton();
+                });
+            }
+
+            // Add selected students to batch
+            if (addToBatchBtn && batchSelect) {
+                addToBatchBtn.addEventListener('click', function () {
+                    const batchName = batchSelect.value;
+                    if (!batchName) {
+                        showMessage('Please select a batch.');
+                        return;
+                    }
+
+                    if (selectedStudentEmails.size === 0) {
+                        showMessage('Please select at least one student.');
+                        return;
+                    }
+
+                    try {
+                        const batches = loadBatches();
+                        if (!batches[batchName]) {
+                            batches[batchName] = [];
+                        }
+
+                        const emailsToAdd = Array.from(selectedStudentEmails);
+                        let addedCount = 0;
+                        emailsToAdd.forEach(email => {
+                            if (!batches[batchName].includes(email)) {
+                                batches[batchName].push(email);
+                                addedCount++;
+                            }
+                        });
+
+                        if (addedCount === 0) {
+                            showMessage('All selected students are already in this batch.');
+                            return;
+                        }
+
+                        saveBatches(batches);
+                        renderBatches();
+                        selectedStudentEmails.clear();
+                        renderSelectedStudents();
+                        if (studentsCheckboxList) {
+                            studentsCheckboxList.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false);
+                        }
+                        updateAddToBatchButton();
+                        showMessage(`${addedCount} student(s) added to batch "${batchName}"!`);
+                    } catch (error) {
+                        console.error('Error adding students to batch:', error);
+                        showMessage('Error adding students to batch. Please try again.');
+                    }
+                });
+            }
+
+            // Render batches list
+            function renderBatches() {
+                const batchesList = document.getElementById('batches-list');
+                if (!batchesList) return;
+
+                try {
+                    const batches = loadBatches();
+                    const batchNames = Object.keys(batches);
+
+                    if (batchNames.length === 0) {
+                        batchesList.innerHTML = '<p class="text-gray-500 text-sm">No batches created yet.</p>';
+                        return;
+                    }
+
+                    batchesList.innerHTML = batchNames.map(batchName => {
+                        const students = batches[batchName] || [];
+                        // Escape batch name for onclick attribute
+                        const safeBatchName = escapeHtml(batchName).replace(/'/g, "\\'");
+                        return `
+                            <div class="bg-gray-700 p-3 rounded mb-2">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-green-400">${escapeHtml(batchName)}</h4>
+                                    <button class="text-red-400 hover:text-red-300 text-xs" onclick="removeBatch('${safeBatchName}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="text-sm text-gray-300">
+                                    <span class="font-semibold">${students.length}</span> student(s)
+                                </div>
+                                <div class="mt-2 text-xs text-gray-400 max-h-20 overflow-y-auto">
+                                    ${students.length > 0 ? students.map(email => `<div>• ${escapeHtml(email)}</div>`).join('') : '<div>No students in this batch</div>'}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } catch (error) {
+                    console.error('Error rendering batches:', error);
+                    batchesList.innerHTML = '<p class="text-red-400 text-sm">Error loading batches.</p>';
+                }
+            }
+
+            // Remove batch function (global for onclick)
+            window.removeBatch = function (batchName) {
+                if (!batchName) return;
+                if (!confirm(`Are you sure you want to delete batch "${batchName}"?`)) {
+                    return;
+                }
+                try {
+                    const batches = loadBatches();
+                    if (!batches[batchName]) {
+                        showMessage('Batch not found.');
+                        return;
+                    }
+                    delete batches[batchName];
+                    saveBatches(batches);
+                    renderBatches();
+                    renderBatchSelect();
+                    // Clear selection if deleted batch was selected
+                    if (batchSelect && batchSelect.value === batchName) {
+                        batchSelect.value = '';
+                        updateAddToBatchButton();
+                    }
+                    showMessage(`Batch "${batchName}" deleted successfully!`);
+                } catch (error) {
+                    console.error('Error removing batch:', error);
+                    showMessage('Error removing batch. Please try again.');
+                }
+            };
+
+            // Helper function to escape HTML
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Initialize displays
+            renderUsers();
+            renderBatches();
+            renderBatchSelect();
+            renderStudentsForBatch();
 
             // Generate Report
-            document.getElementById('generate-report-btn').addEventListener('click', () => {
-                showMessage('Attendance report generated.');
-            });
+            const generateReportBtn = document.getElementById('generate-report-btn');
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', () => {
+                    showMessage('Attendance report generated.');
+                });
+            }
 
             // Edit Settings
-            document.getElementById('edit-settings-btn').addEventListener('click', () => {
-                showMessage('System settings opened for editing.');
-            });
+            const editSettingsBtn = document.getElementById('edit-settings-btn');
+            if (editSettingsBtn) {
+                editSettingsBtn.addEventListener('click', () => {
+                    showMessage('System settings opened for editing.');
+                });
+            }
         }
 
         // Global functions
@@ -2376,7 +4178,3 @@
 </body>
 
 </html>
-
-
-
-
